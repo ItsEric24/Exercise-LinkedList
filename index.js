@@ -3,6 +3,7 @@ class LinkedList {
     this.head = {
       value: value,
       next: null,
+      prev: null
     };
     this.tail = this.head;
     this.length = 1;
@@ -11,6 +12,7 @@ class LinkedList {
     const newNode = {
       value: value,
       next: null,
+      prev: this.tail
     };
     this.tail.next = newNode;
     this.tail = newNode;
@@ -20,8 +22,11 @@ class LinkedList {
     const newNode = {
       value: value,
       next: this.head,
+      prev: null
     };
     this.head = newNode;
+    const headNext = this.head.next;
+    headNext.prev = newNode;
     this.length++;
   }
   printList() {
@@ -40,11 +45,14 @@ class LinkedList {
     const newNode = {
       value: value,
       next: null,
+      prev: null
     };
     const leader = this.traverseToIndex(index - 1);
     const holdingPointer = leader.next;
     leader.next = newNode;
     newNode.next = holdingPointer;
+    newNode.prev = leader;
+    holdingPointer.prev = newNode;
     this.length++;
   }
   traverseToIndex(index){
@@ -59,6 +67,7 @@ class LinkedList {
     return currentNode;
   }
   lookUp(index){
+    if(typeof(index) !== "number") return "wrong index"
     let counter = 0;
     let currentNode = this.head;
 
@@ -68,14 +77,23 @@ class LinkedList {
     }
     return currentNode.value;
   }
+  remove(index){
+    if(typeof(index) !== "number") return "wrong index"
+    const leader = this.traverseToIndex(index - 1);
+    const unwantedNode = leader.next;
+    const unwantedNodeNext = unwantedNode.next;
+    leader.next = unwantedNode.next;
+    unwantedNodeNext.prev = leader;
+    this.length--;
+  }
 }
 
 const myLinkedList = new LinkedList(10);
-myLinkedList.append(5);
-myLinkedList.append(16);
+myLinkedList.append(2);
+myLinkedList.append(3);
 myLinkedList.prepend(1);
-myLinkedList.prepend(2);
-myLinkedList.insert(2, 99);
-myLinkedList.insert(20, 75);
+myLinkedList.insert(1, 4);
+myLinkedList.remove(1);
+console.log(myLinkedList);
 console.log(myLinkedList.printList());
-console.log(myLinkedList.lookUp(3));
+console.log(myLinkedList.lookUp(1));
